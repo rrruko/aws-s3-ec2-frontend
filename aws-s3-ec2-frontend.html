@@ -1,0 +1,32 @@
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script>
+  let app
+  document.addEventListener('DOMContentLoaded', e => {
+    app = new Vue({
+      el: '#app',
+      data: {
+        music: {}
+      }
+    });
+    const req = new XMLHttpRequest();
+    function listener() {
+      console.log('got response');
+      app.music = JSON.parse(this.responseText);
+    }
+    req.addEventListener("load", listener);
+    req.open("GET", "http://ec2-54-166-116-162.compute-1.amazonaws.com:5000");
+    req.send();
+  });
+</script>
+<div id="app">
+  <div v-for="artist in Object.keys(music)">
+    <h1>{{artist}}</h1>
+    <div v-for="album in Object.keys(music[artist])">
+      <h2>{{album}}</h2>
+      <div v-for="song of Object.keys(music[artist][album])">
+        <h3>{{song}}</h3>
+        <audio controls :src="music[artist][album][song]"></audio>
+      </div>
+    </div>
+  </div>
+</div>
