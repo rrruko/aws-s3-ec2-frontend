@@ -5,28 +5,40 @@
     app = new Vue({
       el: '#app',
       data: {
-        music: {}
+        genres: {}
       }
     });
     const req = new XMLHttpRequest();
     function listener() {
-      console.log('got response');
-      app.music = JSON.parse(this.responseText);
+      app.genres = JSON.parse(this.responseText);
     }
     req.addEventListener("load", listener);
-    req.open("GET", "http://ec2-54-166-116-162.compute-1.amazonaws.com:5000");
+    req.open("GET", "http://ec2-18-206-158-38.compute-1.amazonaws.com:5000/genres");
     req.send();
   });
 </script>
 <div id="app">
-  <div v-for="artist in Object.keys(music)">
-    <h1>{{artist}}</h1>
-    <div v-for="album in Object.keys(music[artist])">
-      <h2>{{album}}</h2>
-      <div v-for="song of Object.keys(music[artist][album])">
-        <h3>{{song}}</h3>
-        <audio controls :src="music[artist][album][song]"></audio>
-      </div>
-    </div>
+  <div v-for="genre in genres">
+    <h1>{{genre}}</h1>
   </div>
 </div>
+
+<!-- The core Firebase JS SDK is always required and must be listed first -->
+<script src="https://www.gstatic.com/firebasejs/7.9.3/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/7.9.2/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/7.9.2/firebase-firestore.js"></script>
+
+<script>
+  // Your web app's Firebase configuration
+  var firebaseConfig = {
+    apiKey: "AIzaSyB3BMGm2IImNfMF3g1BxefgS_3o_yyJuxo",
+    authDomain: "micro-service-architecture.firebaseapp.com",
+    databaseURL: "https://micro-service-architecture.firebaseio.com",
+    projectId: "micro-service-architecture",
+    storageBucket: "micro-service-architecture.appspot.com",
+    messagingSenderId: "655383362409",
+    appId: "1:655383362409:web:e82bd5ceb81083b579dbf8"
+  };
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+</script>
