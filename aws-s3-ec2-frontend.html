@@ -1,12 +1,18 @@
 <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 <script>
   let app
+  let backend = "http://ec2-18-206-158-38.compute-1.amazonaws.com:5000/"
   document.addEventListener('DOMContentLoaded', e => {
     app = new Vue({
       el: '#app',
       data: {
-        genres: {},
+        genres: [],
         signedIn: false
+      },
+      methods: {
+        getMusic: function() {
+          //
+        }
       }
     });
     const req = new XMLHttpRequest();
@@ -18,6 +24,8 @@
     req.send();
     let provider = new firebase.auth.GoogleAuthProvider();
 
+    app.signedIn = true;
+    return
     firebase.auth().signInWithPopup(provider).then(function(result) {
       app.signedIn = true;
       let id = result.user.uid;
@@ -39,7 +47,17 @@
 <div id="app">
   <div v-if="signedIn">
     <div v-for="genre in genres">
-      <h1>{{genre}}</h1>
+      <h1>{{genre.name}}</h1>
+      <div v-for="artist in genre.artists">
+        <h2>{{artist.name}}</h2>
+        <div v-for="album in artist.albums">
+          <h3>{{album.name}}</h3>
+          <div v-for="song in album.songs">
+            <p>{{song.name}}</p>
+            <audio controls src={{song.url}}></audio>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
   <div v-else>
