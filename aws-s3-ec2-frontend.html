@@ -24,8 +24,6 @@
     req.send();
     let provider = new firebase.auth.GoogleAuthProvider();
 
-    app.signedIn = true;
-    return
     firebase.auth().signInWithPopup(provider).then(function(result) {
       app.signedIn = true;
       let id = result.user.uid;
