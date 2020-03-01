@@ -5,7 +5,8 @@
     app = new Vue({
       el: '#app',
       data: {
-        genres: {}
+        genres: {},
+        signedIn: false
       }
     });
     const req = new XMLHttpRequest();
@@ -15,11 +16,26 @@
     req.addEventListener("load", listener);
     req.open("GET", "http://ec2-18-206-158-38.compute-1.amazonaws.com:5000/genres");
     req.send();
+    let provider = new firebase.auth.GoogleAuthProvider();
+    firebase.auth().signInWithPopup(provider).then(function(result) {
+      let token = result.credential.accessToken;
+      let user = result.user;
+      app.signedIn = true;
+    }).catch(function(error) {
+      let errorCode = error.code;
+      let errorMessage = error.message;
+      console.log(`whoops: ${errorCode}: ${errorMessage}`);
+    });
   });
 </script>
 <div id="app">
-  <div v-for="genre in genres">
-    <h1>{{genre}}</h1>
+  <div v-if="signedIn">
+    <div v-for="genre in genres">
+      <h1>{{genre}}</h1>
+    </div>
+  </div>
+  <div v-else>
+    Please sign in
   </div>
 </div>
 
