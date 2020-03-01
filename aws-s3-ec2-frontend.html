@@ -17,10 +17,17 @@
     req.open("GET", "http://ec2-18-206-158-38.compute-1.amazonaws.com:5000/genres");
     req.send();
     let provider = new firebase.auth.GoogleAuthProvider();
+
     firebase.auth().signInWithPopup(provider).then(function(result) {
-      let token = result.credential.accessToken;
-      let user = result.user;
       app.signedIn = true;
+      let id = result.user.uid;
+      let name = result.user.displayName;
+      let email = result.user.email;
+      fetch("http://ec2-18-206-158-38.compute-1.amazonaws.com:5000/add-user", {
+        method: 'POST',
+        body: JSON.stringify({ id: id, name: name, email: email }),
+        headers: { 'Content-Type': 'application/json' }
+      }).then(console.log);
     }).catch(function(error) {
       let errorCode = error.code;
       let errorMessage = error.message;
