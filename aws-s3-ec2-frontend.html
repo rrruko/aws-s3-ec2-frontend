@@ -1,64 +1,26 @@
 <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 <script>
-  const API = 'http://ec2-18-206-158-38.compute-1.amazonaws.com:5000'
   let app
-  let backend = "http://ec2-18-206-158-38.compute-1.amazonaws.com:5000/"
+  const API = 'http://ec2-18-206-158-38.compute-1.amazonaws.com:5000'
   document.addEventListener('DOMContentLoaded', e => {
     app = new Vue({
       el: '#app',
       data: {
-        genres: [],
         signedIn: false
       },
       methods: {
-        /*
-        getMusic: async function() {
-          let resp = {};
-          let genresResp = await fetch(API + '/genres');
-          let genresParsed = await genresResp.json();
-          for (genre of genresParsed) {
-            resp[genre] = {};
-            resp[genre].name = genre;
-            let artistsResp = await fetch(API + '/artists/for/genre?genre=' + genre);
-            let artists = await artistsResp.json();
-            resp[genre].artists = {};
-            for (artist of artists) {
-              resp[genre].artists[artist] = {};
-              resp[genre].artists[artist].name = artist;
-              resp[genre].artists[artist].albums = [];
-              let albumsResp = await fetch(API + '/albums/for/artist?artist=' + artist);
-              let albums = await albumsResp.json();
-              for (album of albums) {
-                resp[genre].artists[artist].albums[album] = {};
-                resp[genre].artists[artist].albums[album].name = album;
-                resp[genre].artists[artist].albums[album].songs = [];
-                let songsResp = await fetch(API + '/songs/for/album?album=' + album);
-                let songs = await songsResp.json();
-                for (song of songs) {
-                  resp[genre].artists[artist].albums[album].songs[song] = {};
-                  resp[genre].artists[artist].albums[album].songs[song].name = song;
-                  let urlsResp = await fetch(API + '/song?song=' + song);
-                  let url = await urlsResp.json();
-                  resp[genre].artists[artist].albums[album].songs[song].url = url;
-                }
-              }
-            }
-          }
-          this.genres = resp;
-          console.log(resp);
-        },
-        */
         play: async function(artist, album, song) {
           const req = new XMLHttpRequest();
+          let payload = JSON.stringify({"artist": artist, "album": album, "song": song});
+          console.log("sending payload: " + payload);
           await fetch('https://m2msdi8yg4.execute-api.us-east-1.amazonaws.com/dev/play', {
             method: 'POST',
-            body: JSON.stringify({"artist":artist, "album": album, "song": song})
+            body: payload
           });
         }
       }
     });
 
-    //app.getMusic();
     let provider = new firebase.auth.GoogleAuthProvider();
 
     firebase.auth().signInWithPopup(provider).then(function(result) {
@@ -66,7 +28,7 @@
       let id = result.user.uid;
       let name = result.user.displayName;
       let email = result.user.email;
-      fetch("http://ec2-18-206-158-38.compute-1.amazonaws.com:5000/add-user", {
+      fetch(API + "/add-user", {
         method: 'POST',
         mode: 'no-cors',
         body: JSON.stringify({ id: id, name: name, email: email }),
@@ -80,24 +42,8 @@
   });
 </script>
 <div id="app">
-  <!--
   <div v-if="signedIn">
-    <div v-for="genre in genres">
-      <h1>{{genre.name}}</h1>
-      <div v-for="artist in genre.artists">
-        <h2>{{artist.name}}</h2>
-        <div v-for="album in artist.albums">
-          <h3>{{album.name}}</h3>
-          <div v-for="song in album.songs">
-            <p>{{song.name}}</p>
-            <audio controls src={{song.url}}></audio>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  -->
-  <div v-if="signedIn">
+    <p>Super Mario 64 - Title Theme</p>
     <audio
       v-on:play="play('supa_mayro', '64', 'Title Theme')"
       controls
